@@ -21,3 +21,5 @@ docker-build:
     - docker push "$DOCKER_REGISTRY_IMAGE${tag}"
   # Run this job in a branch where a Dockerfile exists
   when: manual
+  tags:
+    - docker
