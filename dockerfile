@@ -5,7 +5,7 @@ ARG VERSION="1.10.4"
 
 # Use a single RUN command to minimize layers and cleanup after installations
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash curl mysql-client openssl gcc python3-dev libffi-dev musl-dev openssl-dev make && \
+    apk add --no-cache bash curl mysql-client openssl gettext gcc python3-dev libffi-dev musl-dev openssl-dev make && \
     pip install azure-cli --no-cache-dir && \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     chmod +x ./kubectl && \
