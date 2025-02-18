@@ -1,18 +1,22 @@
-FROM python:alpine
-
+FROM alpine:3.18
+# Set arguments for terraform version
 ARG PRODUCT="terraform"
 ARG VERSION="1.10.4"
-
-# Use a single RUN command to minimize layers and cleanup after installations
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash curl mysql-client openssl gettext gcc python3-dev libffi-dev musl-dev openssl-dev make && \
-    pip install azure-cli --no-cache-dir && \
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+# Install base packages
+RUN apk update && \
+    apk add --no-cache bash curl mysql-client openssl gettext 
+# Install Azure-CLI
+RUN apk add py3-pip &&\
+    apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
+    pip install --upgrade pip && \
+    pip install azure-cli --no-cache-dir 
+# Install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     chmod +x ./kubectl && \
-    mv ./kubectl /usr/local/bin/kubectl && \
-    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && \
-    apk del gcc python3-dev libffi-dev musl-dev openssl-dev make && \
-    rm -rf /var/cache/apk/* /root/.cache
+    mv ./kubectl /usr/local/bin/kubectl
+# Install helm
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+# Install Terraform
 RUN apk add --update --virtual .deps --no-cache gnupg && \
     cd /tmp && \
     wget https://releases.hashicorp.com/${PRODUCT}/${VERSION}/${PRODUCT}_${VERSION}_linux_amd64.zip && \
@@ -25,6 +29,11 @@ RUN apk add --update --virtual .deps --no-cache gnupg && \
     mv /tmp/${PRODUCT} /usr/local/bin/${PRODUCT} && \
     rm -f /tmp/${PRODUCT}_${VERSION}_linux_amd64.zip ${PRODUCT}_${VERSION}_SHA256SUMS ${VERSION}/${PRODUCT}_${VERSION}_SHA256SUMS.sig && \
     apk del .deps
+# Package cleanup
+RUN apk del gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
+    rm -rf /var/cache/apk/* /root/.cache
+# Copy scripts
 COPY ./scripts /scripts
+# Set default command
 CMD ["bash"]
   
