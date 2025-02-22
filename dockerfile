@@ -36,4 +36,3 @@ RUN apk del gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
 COPY ./scripts /scripts
 # Set default command
 CMD ["bash"]
-  
