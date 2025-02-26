@@ -7,8 +7,7 @@ RUN apk update && \
     apk add --no-cache bash curl mysql-client openssl gettext 
 # Install Azure-CLI
 RUN apk add py3-pip &&\
-    apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
-    pip install --upgrade pip && \
+    apk add gcc python3-dev musl-dev linux-headers && \
     pip install azure-cli --no-cache-dir 
 # Install kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
@@ -30,7 +29,7 @@ RUN apk add --update --virtual .deps --no-cache gnupg && \
     rm -f /tmp/${PRODUCT}_${VERSION}_linux_amd64.zip ${PRODUCT}_${VERSION}_SHA256SUMS ${VERSION}/${PRODUCT}_${VERSION}_SHA256SUMS.sig && \
     apk del .deps
 # Package cleanup
-RUN apk del gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
+RUN apk del gcc python3-dev musl-dev linux-headers && \
     rm -rf /var/cache/apk/* /root/.cache
 # Copy scripts
 COPY ./scripts /scripts
