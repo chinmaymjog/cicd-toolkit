@@ -4,7 +4,7 @@ ARG PRODUCT="terraform"
 ARG VERSION="1.10.4"
 # Install base packages
 RUN apk update && \
-    apk add --no-cache bash curl mysql-client openssl gettext 
+    apk add --no-cache bash curl mysql-client openssl gettext docker
 # Install Azure-CLI
 RUN apk add py3-pip &&\
     apk add gcc python3-dev musl-dev linux-headers && \
