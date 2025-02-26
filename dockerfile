@@ -33,6 +33,6 @@ RUN apk del gcc python3-dev musl-dev linux-headers && \
     rm -rf /var/cache/apk/* /root/.cache
 # Copy scripts
 COPY ./scripts /scripts
-RUN export PATH=$PATH:/scripts
+RUN echo "export PATH=$PATH:/scripts" >> /etc/profile
 # Set default command
 CMD ["bash"]
