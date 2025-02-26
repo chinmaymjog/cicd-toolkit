@@ -4,7 +4,7 @@ ARG PRODUCT="terraform"
 ARG VERSION="1.10.4"
 # Install base packages
 RUN apk update && \
-    apk add --no-cache bash curl mysql-client openssl gettext docker
+    apk add --no-cache bash curl mysql-client openssl gettext docker git
 # Install Azure-CLI
 RUN apk add py3-pip &&\
     apk add gcc python3-dev musl-dev linux-headers && \
@@ -33,6 +33,6 @@ RUN apk del gcc python3-dev musl-dev linux-headers && \
     rm -rf /var/cache/apk/* /root/.cache
 # Copy scripts
 COPY ./scripts /scripts
-RUN echo "export PATH=$PATH:/scripts" >> /etc/profile
+ENV PATH="$PATH:/scripts"
 # Set default command
 CMD ["bash"]
