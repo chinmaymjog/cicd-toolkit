@@ -1,6 +1,7 @@
 # 🛠️ DevOps CI/CD Toolkit
+> **Purpose**: Setup and use CI/CD across VM-based and K8s-based platforms.
 
-A collection of reusable GitLab CI/CD templates and automation scripts designed for enterprise-grade PHP, WordPress, and Symfony deployments. This toolkit streamlines the "Development to Production" workflow with built-in security and quality hurdles.
+A collection of reusable GitLab CI/CD templates and automation scripts designed for enterprise-grade PHP, WordPress, and Symfony deployments. This toolkit provides the "DevOps Glue" for both the **[LAMP Hosting Platform](https://github.com/chinmaymjog/azure-lamp-hosting)** and the **[AKS/WordPress Ecosystem](https://github.com/chinmaymjog/wp-boilerplate)**. This toolkit streamlines the "Development to Production" workflow with built-in security and quality hurdles.
 
 ## 🚀 Repository Highlights
 
