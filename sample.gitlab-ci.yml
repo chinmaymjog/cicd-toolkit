@@ -1,0 +1,89 @@
+# Templates for each shared platform
+
+############## Shared01 ##############
+# include:
+#   project: "devops-team/ci-cd-template"
+#   ref: master
+#   file: "/basics.yml"
+
+# variables:
+#   SCRIPTS_REPO: https://$API_TOKEN_NAME:$API_TOKEN@gitlab-c4e-dcadcx.example.com/devops-team/ci-cd-template.git
+
+# before_script:
+#   - mkdir deploy_scripts
+#   - git clone -q --depth 1 "$SCRIPTS_REPO" deploy_scripts
+#   - ls -l
+
+# deploy_preprod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "bfgoodrich_11" 
+#   extends: .deploy_preprod
+#   needs: []
+
+# deploy_prod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "bfgoodrich_3"
+#   extends: .deploy_prod
+############################
+
+
+############## Shared02 ##############
+# include:
+#   project: "devops-team/ci-cd-template"
+#   ref: master
+#   file: "/basics.yml"
+
+# variables:
+#   SCRIPTS_REPO: https://$API_TOKEN_NAME:$API_TOKEN@gitlab-c4e-dcadcx.example.com/devops-team/ci-cd-template.git
+
+# before_script:
+#   - mkdir deploy_scripts
+#   - git clone -q --depth 1 "$SCRIPTS_REPO" deploy_scripts
+#   - ls -l
+
+# deploy_preprod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "apicovered_807" 
+#   extends: .deploy_shared02_preprod
+#   needs: []
+
+# deploy_prod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "apicovered_321"
+#   extends: .deploy_shared02_prod
+############################
+
+
+############## Legacy ##############
+# include:
+#   project: "devops-team/ci-cd-template"
+#   ref: master
+#   file: "/basics.yml"
+
+# variables:
+#   SCRIPTS_REPO: https://$API_TOKEN_NAME:$API_TOKEN@gitlab-c4e-dcadcx.example.com/devops-team/ci-cd-template.git
+
+# before_script:
+#   - mkdir deploy_scripts
+#   - git clone -q --depth 1 "$SCRIPTS_REPO" deploy_scripts
+#   - ls -l
+
+# deploy_preprod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "results.companymotorsport.com"
+#     WEB_DIR: "www"
+#   extends: .deploy_legacy_preprod
+#   needs: []
+
+# deploy_prod:
+#   stage: deploy
+#   variables:
+#     WEB_USER: "results.companymotorsport.com"
+#     WEB_DIR: "www"
+#   extends: .deploy_legacy_prod
+############################

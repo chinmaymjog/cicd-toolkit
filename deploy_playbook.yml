@@ -1,0 +1,100 @@
+- name: "Transfer code to web servers"
+  become: true
+  hosts: "{{ env }}"
+  vars:
+    #remote_work_dir: /webbackup/sync_gitlab_data/{{ inventory_hostname }}
+    remote_work_dir: /websites/gitlab_job/{{ inventory_hostname }}
+
+  tasks:
+    - name: "Create remote user dir"
+      ansible.builtin.file:
+        #path: "{{ remote_work_dir }}/{{ web_user }}/{{ item }}/{{ ansible_date_time.date }}"
+        path: "{{ remote_work_dir }}/{{ item }}"
+        state: directory
+      loop:
+        - backup
+
+    - name: "Upload source code archive to web servers in backup directory"
+      ansible.builtin.copy:
+        src: ../source_code.tar.gz
+        #dest: "{{ remote_work_dir }}/{{ web_user }}/backup/{{ ansible_date_time.date }}/{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}.tar.gz"
+        dest: "{{ remote_work_dir }}/{{ web_user }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}_{{ ansible_date_time.second }}.tar.gz"
+
+    # - name: "Backup current document root"
+    #   community.general.archive:
+    #     path: "{{ dest }}"
+    #     dest: "{{ remote_work_dir }}/backup/{{ web_user }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}_{{ ansible_date_time.second }}.tar.gz"
+    #     format: gz 
+
+    - name: Check if pre deploy script exists
+      stat:
+        path: ../scripts/pre_deploy.sh
+      register: pre_deploy
+      delegate_to: localhost
+      
+    - name: Run pre deploy script
+      ansible.builtin.script: ../scripts/pre_deploy.sh
+      become: yes
+      become_user: "{{ web_user }}"
+      args:
+        chdir: "{{ dest }}"
+      register: results_pre
+      when: pre_deploy.stat.exists
+    
+    - name: Pre deploy script results
+      debug: 
+        var: results_pre.stdout
+
+    - name: Extract archive to main code directory
+      ansible.builtin.unarchive:
+        #src: ../source_code.tar.gz
+        src: "{{ remote_work_dir }}/{{ web_user }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}_{{ ansible_date_time.second }}.tar.gz"
+        dest: "{{ dest }}"
+        owner: "{{ web_user }}"
+        group: web_users
+        remote_src: yes
+        extra_opts: ["--overwrite"]
+      when: env not in [ 'legacy_preprod', 'legacy_prod' ]
+
+    - name: Extract archive to main code directory(Legacy)
+      ansible.builtin.unarchive:
+        #src: ../source_code.tar.gz
+        src: "{{ remote_work_dir }}/{{ web_user }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}_{{ ansible_date_time.second }}.tar.gz"
+        dest: "{{ dest }}"
+        # owner: "{{ web_user }}"
+        # group: web_users
+        remote_src: yes
+        extra_opts: ["--overwrite"]
+      when: env in [ 'legacy_preprod', 'legacy_prod' ]
+
+    - name: Check if post deploy script exists
+      stat:
+        path: ../scripts/post_deploy.sh
+      register: post_deploy
+      delegate_to: localhost
+
+    - name: Run post deploy script
+      ansible.builtin.script: ../scripts/post_deploy.sh
+      become: yes
+      become_user: "{{ web_user }}"
+      args:
+        chdir: "{{ dest}}"
+      register: results_post
+      when: post_deploy.stat.exists
+
+    - name: Post deploy script results
+      debug: 
+        var: results_post.stdout
+
+    # - name: Run post deploy script
+    #   ansible.builtin.script: 
+    #     chdir: "{{ dest }}"
+    #     cmd: ../scripts/post_deploy.sh
+    #   when: post_deploy.stat.exists
+
+    - name: "Update directory permissions"
+      ansible.builtin.command: find "{{ dest }}" -type d -exec chmod -c 0775 {} \;
+
+    - name: "Update file permissions"
+      ansible.builtin.command: find "{{ dest }}" -type f -exec chmod -c 0664 {} \;
+
