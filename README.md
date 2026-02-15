@@ -35,7 +35,7 @@ Include these templates in your project's `.gitlab-ci.yml`:
 
 ```yaml
 include:
-  - project: 'devops-team/ci-cd-toolkit'
+  - project: 'chinmaymjog/devops-toolkit'
     ref: master
     file: '/symfony.yml'
 ```
